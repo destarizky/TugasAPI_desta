@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaCircleUser, FaLock } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -6,13 +6,22 @@ const LoginForm = () => {
   const [clicked, setClicked] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false); // 🔧 indikator login sukses
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loginSuccess) {
+      navigate('/search'); // ✅ hanya navigasi setelah login sukses
+    }
+  }, [loginSuccess, navigate]);
 
   const handleClick = async (e) => {
     e.preventDefault();
     setClicked(true);
 
     try {
-      const res = await fetch('"http://localhost:5000/api/auth/login"', {
+      const res = await fetch('http://localhost:5000/api/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -25,7 +34,7 @@ const LoginForm = () => {
         localStorage.setItem("token", data.token);
         localStorage.setItem("apiKey", data.apiKey);
         alert("Login berhasil!");
-        // Redirect bisa ditambahkan di sini kalau perlu
+        setLoginSuccess(true); // 🔧 trigger navigasi
       } else {
         alert(data.message || "Login gagal");
       }
@@ -34,13 +43,8 @@ const LoginForm = () => {
       console.error(err);
     }
 
-    setTimeout(() => {
-      setClicked(false);
-    }, 500);
+    setClicked(false);
   };
-
-  const navigate = useNavigate();
-  navigate('/search')
 
   return (
     <div className='wrapper'>

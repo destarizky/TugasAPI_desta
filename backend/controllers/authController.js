@@ -18,14 +18,22 @@ export const register = async (req, res) => {
 };
 
 export const login = (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  db.query('SELECT * FROM users WHERE username = ?', [username], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).json({ message: 'User tidak ditemukan' });
+  db.query('SELECT * FROM users WHERE email = ?', [email], async (err, results) => {
+    if (err || results.length === 0) {
+      return res.status(401).json({ message: 'Email tidak ditemukan' });
+    }
 
     const valid = await bcrypt.compare(password, results[0].password);
     if (!valid) return res.status(403).json({ message: 'Password salah' });
 
-    res.json({ message: 'Login sukses', apiKey: results[0].api_key });
+    const token = jwt.sign({ id: results[0].id }, process.env.JWT_SECRET || 'secretkey');
+
+    res.json({
+      message: 'Login sukses',
+      apiKey: results[0].api_key,
+      token
+    });
   });
 };
