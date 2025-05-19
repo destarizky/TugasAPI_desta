@@ -33,7 +33,7 @@ export const login = (req, res) => {
     res.json({
       message: 'Login sukses',
       apiKey: results[0].api_key,
-      token
+      token // Token di kirim ke frontend
     });
   });
 };

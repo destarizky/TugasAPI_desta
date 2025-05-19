@@ -12,11 +12,11 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (loginSuccess) {
-      navigate('/search'); // ✅ hanya navigasi setelah login sukses
+      navigate('/search');
     }
   }, [loginSuccess, navigate]);
 
-  const handleClick = async (e) => {
+  const handleClick = async (e) => { // Integrasi dengan endpoint login backend
     e.preventDefault();
     setClicked(true);
 
@@ -30,11 +30,11 @@ const LoginForm = () => {
       });
 
       const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("apiKey", data.apiKey);
+      if (res.ok) { // Menyimpan token dan API Key dari Backend
+        localStorage.setItem("token", data.token); // Menyimpan JWT Token
+        localStorage.setItem("apiKey", data.apiKey); // Menyimpan API Key
         alert("Login berhasil!");
-        setLoginSuccess(true); // 🔧 trigger navigasi
+        setLoginSuccess(true);
       } else {
         alert(data.message || "Login gagal");
       }
